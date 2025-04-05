@@ -1,33 +1,25 @@
 import mongoose from "mongoose";
 
-async function connectDB() {
-  try {
-    if (mongoose.connection.readyState === 1) {
-      console.log("Already connected to DB");
-      return;
-    }
+let cachedConnection = null;
 
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("Connected to MongoDB");
+async function connectDB() {
+  if (cachedConnection) {
+    console.log("Using existing MongoDB connection");
+    return cachedConnection;
+  }
+
+  try {
+    const connection = await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000, 
+    });
+
+    console.log("Connected to MongoDB successfully");
+    cachedConnection = connection;
+    return connection;
   } catch (err) {
-    console.error("MongoDB connection error:", err.message);
-    throw err;
+    console.error("MongoDB connection error:", err);
+    throw new Error("Database connection failed");
   }
 }
 
 export default connectDB;
-
-// import mongoose from "mongoose";
-
-// async function connectDB() {
-//   try {
-//     if (mongoose.connections[0].readyState) return;
-
-//     await mongoose.connect(process.env.MONGO_URI);
-//     console.log("Connected to DB");
-//   } catch (err) {
-//     console.log("Connection failed");
-//   }
-// }
-
-// export default connectDB;
