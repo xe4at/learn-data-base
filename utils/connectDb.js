@@ -18,7 +18,7 @@ async function connectDB() {
     return connection;
   } catch (err) {
     console.error("MongoDB connection error:", err);
-    throw new Error("Database connection failed");
+    // throw new Error("Database connection failed");
   }
 }
 
