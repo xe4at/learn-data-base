@@ -1,3 +1,4 @@
+import User from "../../../../models/User";
 import connectDB from "../../../../utils/connectDb";
 
 export const config = {
@@ -27,12 +28,20 @@ export default async function handler(req, res) {
       // مثلاً: await SomeModel.create({ name });
       //این کد ها تنها برای تمرین توسط من نوشته شده و هیچ گونه اعتباری ندارد
 
+      // const user = new User({ name });
+      // await user.save();
+
+      const user = await User.create({ name });
+
       return res.status(201).json({
         status: "success",
         message: "Data Created",
-        data: { name },
+        data: user,
       });
     }
+
+    const user = new User({ name });
+    await user.save();
 
     // متدهای غیرمجاز
     return res.status(405).json({
